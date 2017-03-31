@@ -1,0 +1,3 @@
+rootProject.name = 'Triples'
+
+include ':app'
