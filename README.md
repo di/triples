@@ -4,8 +4,8 @@ A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
 
-1. `lein figwheel ios`
-2. `react-native start`
+1. `lein figwheel ios` or `rlwrap lein figwheel ios`
+2. `react-native run-ios`
 
 ## License
 

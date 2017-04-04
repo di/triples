@@ -5,3 +5,8 @@
   :get-greeting
   (fn [db _]
     (:greeting db)))
+
+(reg-sub
+  :get-game
+  (fn [db _]
+    (:current-game db)))

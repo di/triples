@@ -33,3 +33,9 @@
  validate-spec
  (fn [db [_ value]]
    (assoc db :greeting value)))
+
+(reg-event-db
+ :set-game
+ validate-spec
+ (fn [db [_ value]]
+   (assoc db :current-game value)))

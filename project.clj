@@ -14,7 +14,10 @@
                                    ["do" "clean"
                                     ["with-profile" "prod" "cljsbuild" "once"]]}
             :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.8"]
-                                            [com.cemerick/piggieback "0.2.1"]]
+                                            [com.cemerick/piggieback "0.2.1"]
+                                            [org.clojure/test.check "0.9.0"]
+                                            [org.clojure/math.combinatorics "0.1.4"]
+                                            ]
                              :source-paths ["src" "env/dev"]
                              :cljsbuild    {:builds [{:id           "ios"
                                                       :source-paths ["src" "env/dev"]
