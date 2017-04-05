@@ -3,7 +3,6 @@
 
 (ns triples.deck
   (:require [clojure.spec :as s]
-            [clojure.test.check.generators :as gen]
             [clojure.math.combinatorics :as combo]
             [clojure.string :as str]))
 
@@ -45,10 +44,8 @@
     (unique-or-distinct ::number)
     (unique-or-distinct ::shading)))
 
-;; Generators
 (defn deal-round []
-  "Returns a one off deal randomly generated from specs"
-  (gen/generate (s/gen ::deal)))
+  (flatten (take 4 (partition 3 (shuffle all-cards)))))
 
 (def all-cards
   "Full 81 card deck"
