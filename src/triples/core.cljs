@@ -28,30 +28,27 @@
       (.alert (.-Alert ReactNative) title))
 
 (defn start []
-  (dispatch [:set-game (triples.deck.deal-round)])
-  (alert "HELLO FRIEND"))
+  (dispatch [:set-game (triples.deck.deal-round)]))
 
 (defn restart-game [game]
-  [scrollview {:contentContainerStyle {:flex-direction "column" :marginTop 40 :align-items "center"}}
+  [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column" :marginTop 40 :align-items "center"}}
     [text {:style {:text-align "center" :font-weight "bold"}} "Current Game"]
     [triples.components/coll-of-cards @game]
    ])
 
 (defn new-game []
-  [view {:style {:flex-direction "column" :align-items "center"}}
-       ;[text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center"}} @greeting]
-       ;[image {:source logo-img
-       ;        :style  {:width 80 :height 80 :margin-bottom 30}}]
+  [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column" :align-items "center" :justify-content "center"}}
+       [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center"}} "No game in progress."]
        [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
                              :on-press #(start)}
         [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "New Game"]]])
 
 (defn app-root []
   (let [game (subscribe [:get-game])]
-    ;(if (nil? @game)
-    ;  #(new-game)
-      #(restart-game game)
-    ;  )
+    (if (nil? @game)
+      (new-game)
+      (restart-game game)
+      )
     ))
 
 (defn init []
