@@ -31,6 +31,7 @@
 
 (s/def ::deal
   (s/and
+    ; This is wrong, it should check if there is a valid set as well
     (s/coll-of ::card :distinct true :max-count 21 :min-count 12)
     (count-multiple-of 3)))
 

@@ -3,52 +3,80 @@
             [triples.deck :as deck]))
 
 (def ReactNative (js/require "react-native"))
+(def ReactNativeSvg (js/require "react-native-svg"))
 
 (def view (r/adapt-react-class (.-View ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
+(def touchable (r/adapt-react-class (.-TouchableOpacity ReactNative)))
+
+(def svg (r/adapt-react-class (.-Svg ReactNativeSvg)))
+(def circle (r/adapt-react-class (.-Circle ReactNativeSvg)))
+(def line (r/adapt-react-class (.-Line ReactNativeSvg)))
+(def rect (r/adapt-react-class (.-Rect ReactNativeSvg)))
+(def polygon (r/adapt-react-class (.-Polygon ReactNativeSvg)))
 
 (def color-map
   {:red "#F44948"
    :green "#71F21F"
    :blue "#4FCCEF"})
 
-(defn border-styles [shading color shape]
-  (cond
-    (= shading :outline)
-      { :border (str "1px solid " color)}
-    (= shading :striped)
-      { :border (str "1px solid " color)
-        :background (str
-                    "repeating-linear-gradient("
-                    (if (= shape :triangle) "0" "45")
-                    "deg, "
-                    color ", "
-                    color " 1px, "
-                    "#fff 1px, "
-                    "#fff 3px)")}
+(def shape-map
+  {:circle circle
+   :square rect
+   :triangle polygon})
 
-    (= shading :solid) {:background-color color}))
+(def size-map
+  {:circle {:cx 13 :cy 13 :r 10}
+   :square {:x 4 :y 4 :width 18 :height 18}
+   :triangle {:points "3,20, 13,3, 23,20"}})
+
+(def stripe-map
+  {:circle [{:x1 5 :y1 7 :x2 5 :y2 19}
+            {:x1 9 :y1 4 :x2 9 :y2 22}
+            {:x1 13 :y1 4 :x2 13 :y2 22}
+            {:x1 17 :y1 4 :x2 17 :y2 22}
+            {:x1 21 :y1 7 :x2 21 :y2 19}]
+   :square [{:x1 9 :y1 5 :x2 9 :y2 21}
+            {:x1 13 :y1 4 :x2 13 :y2 21}
+            {:x1 17 :y1 5 :x2 17 :y2 21}]
+   :triangle [{:x1 9 :y1 10 :x2 9 :y2 20}
+              {:x1 13 :y1 4 :x2 13 :y2 20}
+              {:x1 17 :y1 10 :x2 17 :y2 20}]})
 
 (defn map-component [component coll]
   "Adds keys to component"
   (map (fn [item n] ^{:key n} [component item])
        coll (range)))
 
-(defn shape [card]
-  (let [color ((::deck/color card) color-map)
+(defn card-component [card]
+  (let [color (::deck/color card)
+        colorname (name (::deck/color card))
         shape (::deck/shape card)
         number (::deck/number card)
         shading (::deck/shading card)
-        border (border-styles shading color shape)
-        style (merge border)]
-    [text (clojure.string/join " " [(name shape) (name color) number (name shading)]);{:class (str "shape" " " (name shape)) :style style} ""
-    ]))
-
-(defn card [card]
-  [view ;{:class "card"}
-    (for [n (range (::deck/number card))]
-      ^{:key n} [shape card])])
+        ]
+    [touchable {:style {:flexDirection "row"
+                        :justifyContent "center"
+                        :borderWidth 1
+                        :borderColor "#ddd"
+                        :width "30%"
+                        :padding 10
+                        :margin 2}}
+     (repeat number
+             [svg {:height 25 :width 25}
+              (cons [
+                     (get shape-map shape)
+                     (merge
+                       (get size-map shape)
+                       {:fill (if (= shading :solid) colorname "none")}
+                       {:strokeWidth 2 :stroke colorname}
+                       )]
+                    (if (= shading :striped)
+                      (map
+                        (fn [params] [line (merge params {:stroke colorname :strokeWidth 2})])
+                        (get stripe-map shape))))])]))
 
 (defn coll-of-cards [coll]
-  [view ;{:class "card-collection"}
-    (map-component card coll)])
+  [view {:style
+         {:flexDirection "row" :flexWrap "wrap" :alignItems "flex-start"}}
+   (map-component card-component coll)])
