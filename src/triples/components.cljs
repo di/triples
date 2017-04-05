@@ -50,7 +50,7 @@
 
 (defn card-component [card]
   (let [color (::deck/color card)
-        colorname (name (::deck/color card))
+        hex (get color-map (::deck/color card))
         shape (::deck/shape card)
         number (::deck/number card)
         shading (::deck/shading card)
@@ -68,13 +68,15 @@
                      (get shape-map shape)
                      (merge
                        (get size-map shape)
-                       {:fill (if (= shading :solid) colorname "none")}
-                       {:strokeWidth 2 :stroke colorname}
+                       {:fill (if (= shading :solid) hex "none")}
+                       {:strokeWidth 2 :stroke hex}
                        )]
                     (if (= shading :striped)
                       (map
-                        (fn [params] [line (merge params {:stroke colorname :strokeWidth 2})])
-                        (get stripe-map shape))))])]))
+                        (fn [params] [line (merge params {:stroke hex :strokeWidth 2})])
+                        (get stripe-map shape))))])]
+      ;[text (clojure.string/join " " [color hex shape number shading])]
+))
 
 (defn coll-of-cards [coll]
   [view {:style
