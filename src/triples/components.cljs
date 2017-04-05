@@ -1,5 +1,6 @@
 (ns triples.components
   (:require [reagent.core :as r]
+            [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [triples.deck :as deck]))
 
 (def ReactNative (js/require "react-native"))
@@ -45,23 +46,31 @@
 
 (defn map-component [component coll]
   "Adds keys to component"
-  (map (fn [item n] ^{:key n} [component item])
+  (map (fn [item n] ^{:key n} [component item n])
        coll (range)))
 
-(defn card-component [card]
+(defn select-card [index]
+  (let [selected (subscribe [:get-selected])]
+   (if (contains? @selected index)
+    (dispatch [:set-selected (disj @selected index)])
+    (dispatch [:set-selected (conj @selected index)]))))
+
+(defn card-component [card index]
   (let [color (::deck/color card)
         hex (get color-map (::deck/color card))
         shape (::deck/shape card)
         number (::deck/number card)
         shading (::deck/shading card)
+        selected (subscribe [:get-selected])
         ]
     [touchable {:style {:flexDirection "row"
                         :justifyContent "center"
                         :borderWidth 1
-                        :borderColor "#ddd"
+                        :borderColor (if (contains? @selected index) "#f00" "#ddd")
                         :width "30%"
                         :padding 10
-                        :margin 2}}
+                        :margin 2}
+                :on-press #(select-card index)}
      (repeat number
              [svg {:height 25 :width 25}
               (cons [

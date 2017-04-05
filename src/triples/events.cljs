@@ -39,3 +39,8 @@
  validate-spec
  (fn [db [_ value]]
    (assoc db :current-game value)))
+
+(reg-event-db
+ :set-selected
+ (fn [db [_ value]]
+   (assoc db :selected value)))

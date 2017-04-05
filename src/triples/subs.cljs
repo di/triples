@@ -10,3 +10,8 @@
   :get-game
   (fn [db _]
     (:current-game db)))
+
+(reg-sub
+  :get-selected
+  (fn [db _]
+    (:selected db)))
