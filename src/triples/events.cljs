@@ -42,5 +42,8 @@
 
 (reg-event-db
  :set-selected
+ validate-spec
  (fn [db [_ value]]
-   (assoc db :selected value)))
+   (if (contains? (get db :selected) value)
+     (update db :selected disj value)
+     (update db :selected conj value))))

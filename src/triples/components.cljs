@@ -50,10 +50,7 @@
        coll (range)))
 
 (defn select-card [index]
-  (let [selected (subscribe [:get-selected])]
-   (if (contains? @selected index)
-    (dispatch [:set-selected (disj @selected index)])
-    (dispatch [:set-selected (conj @selected index)]))))
+  (dispatch [:set-selected index]))
 
 (defn card-component [card index]
   (let [color (::deck/color card)
