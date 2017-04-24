@@ -17,9 +17,9 @@
 (def polygon (r/adapt-react-class (.-Polygon ReactNativeSvg)))
 
 (def color-map
-  {:red "#F44948"
-   :green "#71F21F"
-   :blue "#4FCCEF"})
+  {:red "#E79F26"
+   :green "#069F73"
+   :blue "#5CB4E4"})
 
 (def shape-map
   {:circle circle
