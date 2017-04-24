@@ -45,11 +45,27 @@
     (disj col val)
     (conj col val)))
 
+(defn get-many [col indices]
+  (map #(nth col %) indices))
+
+(defn unique-or-distinct [col feature]
+  (not= 2 (count (into #{} (map feature) col))))
+
+(defn valid-set? [cards]
+  (and
+    (unique-or-distinct cards :triples.deck/shape)
+    (unique-or-distinct cards :triples.deck/color)
+    (unique-or-distinct cards :triples.deck/number)
+    (unique-or-distinct cards :triples.deck/shading)))
+
 (reg-event-db
  :set-selected
  validate-spec
  (fn [db [_ value]]
-   (let [selected (toggle (get db :selected) value)]
+   (let [selected (toggle (get db :selected) value)
+         cards (get-many (get db :current-game) selected)
+         ]
+     (prn (valid-set? cards)) ; Remove this
      (if (= 3 (count selected))
       (assoc db :selected #{})
       (assoc db :selected selected)))))
