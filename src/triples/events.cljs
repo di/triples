@@ -40,10 +40,16 @@
  (fn [db [_ value]]
    (assoc db :current-game value)))
 
+(defn toggle [col val]
+  (if (contains? col val)
+    (disj col val)
+    (conj col val)))
+
 (reg-event-db
  :set-selected
  validate-spec
  (fn [db [_ value]]
-   (if (contains? (get db :selected) value)
-     (update db :selected disj value)
-     (update db :selected conj value))))
+   (let [selected (toggle (get db :selected) value)]
+     (if (= 3 (count selected))
+      (assoc db :selected #{})
+      (assoc db :selected selected)))))
