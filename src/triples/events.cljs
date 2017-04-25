@@ -38,7 +38,7 @@
  :set-game
  validate-spec
  (fn [db [_ value]]
-   (assoc db :current-game value)))
+   (merge db value)))
 
 (defn toggle [col val]
   (if (contains? col val)
@@ -53,6 +53,7 @@
 
 (defn valid-set? [cards]
   (and
+    (= 3 (count cards))
     (unique-or-distinct cards :triples.deck/shape)
     (unique-or-distinct cards :triples.deck/color)
     (unique-or-distinct cards :triples.deck/number)
@@ -63,9 +64,16 @@
  validate-spec
  (fn [db [_ value]]
    (let [selected (toggle (get db :selected) value)
-         cards (get-many (get db :current-game) selected)
+         current-game (get db :current-game)
+         cards (get-many current-game selected)
+         draw-pile (get db :draw-pile)
+         replace-cards (subvec draw-pile 0 3)
          ]
-     (prn (valid-set? cards)) ; Remove this
+
      (if (= 3 (count selected))
-      (assoc db :selected #{})
+       (if (valid-set? cards)
+        (merge db {:selected #{}
+                   :current-game (replace (zipmap cards replace-cards) current-game)
+                   :draw-pile (subvec draw-pile 3)})
+        (assoc db :selected #{}))
       (assoc db :selected selected)))))

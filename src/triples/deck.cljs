@@ -45,7 +45,10 @@
     (unique-or-distinct ::shading)))
 
 (defn deal-round []
-  (flatten (take 4 (partition 3 (shuffle all-cards)))))
+  (let [deck (shuffle all-cards)]
+    {:current-game (subvec deck 0 12)
+    :draw-pile (subvec deck 12)})
+  )
 
 (def all-cards
   "Full 81 card deck"
