@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :refer [reg-event-db after]]
    [clojure.spec :as s]
+   [triples.deck :as deck]
    [triples.db :as db :refer [app-db]]))
 
 ;; -- Interceptors ------------------------------------------------------------
@@ -48,17 +49,6 @@
 (defn get-many [col indices]
   (map #(nth col %) indices))
 
-(defn unique-or-distinct [col feature]
-  (not= 2 (count (into #{} (map feature) col))))
-
-(defn valid-set? [cards]
-  (and
-    (= 3 (count cards))
-    (unique-or-distinct cards :triples.deck/shape)
-    (unique-or-distinct cards :triples.deck/color)
-    (unique-or-distinct cards :triples.deck/number)
-    (unique-or-distinct cards :triples.deck/shading)))
-
 (reg-event-db
  :set-selected
  validate-spec
@@ -71,7 +61,7 @@
          ]
 
      (if (= 3 (count selected))
-       (if (valid-set? cards)
+       (if (deck/valid-set? cards)
         (merge db {:selected #{}
                    :current-game (replace (zipmap cards replace-cards) current-game)
                    :draw-pile (subvec draw-pile 3)})
