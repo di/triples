@@ -84,6 +84,9 @@
       ;[text (clojure.string/join " " [color hex shape number shading])]
 ))
 
+(defn remaining-component [n]
+  [text (clojure.string/join " " [n "cards remaining"])])
+
 (defn coll-of-cards [coll]
   [view {:style
          {:flexDirection "row" :flexWrap "wrap" :alignItems "flex-start"}}

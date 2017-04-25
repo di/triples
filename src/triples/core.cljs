@@ -30,11 +30,15 @@
 (defn start []
   (dispatch [:set-game (triples.deck.deal-round)]))
 
-(defn restart-game [game]
+(defn restart-game []
+  (let [current-game (subscribe [:get-current-game])
+        draw-pile (subscribe [:get-draw-pile])
+        ]
   [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column" :marginTop 40 :align-items "center"}}
     [text {:style {:text-align "center" :font-weight "bold"}} "Current Game"]
-    [triples.components/coll-of-cards @game]
-   ])
+    [triples.components/coll-of-cards @current-game]
+    [triples.components/remaining-component (count @draw-pile)]
+   ]))
 
 (defn new-game []
   [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column" :align-items "center" :justify-content "center"}}
@@ -44,10 +48,10 @@
         [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "New Game"]]])
 
 (defn app-root []
-  (let [game (subscribe [:get-game])]
-    (if (nil? @game)
+  (let [current-game (subscribe [:get-current-game])]
+    (if (nil? @current-game)
       (new-game)
-      (restart-game game)
+      (restart-game)
       )
     ))
 

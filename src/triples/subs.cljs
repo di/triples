@@ -7,9 +7,14 @@
     (:greeting db)))
 
 (reg-sub
-  :get-game
+  :get-current-game
   (fn [db _]
     (:current-game db)))
+
+(reg-sub
+  :get-draw-pile
+  (fn [db _]
+    (:draw-pile db)))
 
 (reg-sub
   :get-selected
