@@ -8,28 +8,13 @@
 (def numbers #{1 2 3})
 (def shadings #{:solid :striped :outline})
 
-(def min-deck 12)
+(def min-deck 3)
 
 (defn count-multiple-of [n]
   #(= 0 (mod (count %) n)))
 
-(defn unique-or-distinct [feature]
-  (fn [s]
-    ;; could be faster by exiting early
-    (not= 2 (count (into #{} (map feature) s)))))
-
-(defn deal-round []
-  (let [deck (shuffle all-cards)]
-    (ensure-set {:current-game (subvec deck 0 min-deck)
-                 :draw-pile (subvec deck min-deck)})))
-
-(defn ensure-set [{:keys [current-game draw-pile]}]
-  (loop [current-game current-game draw-pile draw-pile] ; this is ugly
-    (if (valid-set? current-game)
-      {:current-game current-game
-       :draw-pile draw-pile}
-      (recur (concat current-game (take 3 draw-pile))
-             (subvec draw-pile 3)))))
+(defn get-many [col indices]
+  (map #(nth col %) indices))
 
 (defn unique-or-distinct [col feature]
   (not= 2 (count (into #{} (map feature) col))))
@@ -55,3 +40,36 @@
     ::color color
     ::number number
     ::shading shading})))
+
+(defn remove-valid-set [state]
+  (let [current-game (:current-game state)
+        selected (:selected state)
+        cards (get-many current-game selected)
+        draw-pile (:draw-pile state)
+        replace-cards (take 3 draw-pile)] ; will throw index out of bounds
+
+    (merge state (if (>= (count cards) (+ min-deck 3))
+      {:current-game (vec (remove (set cards) current-game))} ; some bug here TODO
+      {:current-game (replace (zipmap cards replace-cards)
+                                            current-game)
+       :draw-pile (remove (set replace-cards) draw-pile)}))))
+
+(defn ensure-set [state]
+  (prn "in ensureset")
+  (let [current-game (:current-game state)
+        draw-pile (:draw-pile state)]
+    (loop [current-game current-game draw-pile draw-pile] ; this is ugly
+      (if (valid-set? current-game)
+      ;(if (and (valid-set? current-game) (>= (count current) min-deck))
+        (merge state {:current-game current-game :draw-pile draw-pile})
+        (recur (concat current-game (take 3 draw-pile))
+              (subvec draw-pile 3))))))
+
+(defn deselect [state]
+  (merge state {:selected #{}}))
+
+(defn deal-round []
+  (let [deck (shuffle all-cards)]
+  ;(let [deck all-cards]
+    (ensure-set {:current-game (subvec deck 0 min-deck)
+                 :draw-pile (subvec deck min-deck)})))

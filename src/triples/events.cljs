@@ -46,27 +46,19 @@
     (disj col val)
     (conj col val)))
 
-(defn get-many [col indices]
-  (map #(nth col %) indices))
-
 (reg-event-db
  :set-selected
  validate-spec
  (fn [db [_ value]]
    (let [selected (toggle (get db :selected) value)
-         current-game (get db :current-game)
-         cards (get-many current-game selected)
-         draw-pile (get db :draw-pile)
-         replace-cards (subvec draw-pile 0 3) ; will throw index out of bounds
+         cards (deck/get-many (get db :current-game) selected)
          ]
-
      (if (= 3 (count selected))
        (if (deck/valid-set? cards)
-        (merge db
-               {:selected #{}}
-               (deck/ensure-set {:current-game (replace (zipmap cards
-                                                                replace-cards)
-                                                        current-game)
-                                 :draw-pile (subvec draw-pile 3)}))
-        (assoc db :selected #{}))
-      (assoc db :selected selected)))))
+        (-> db
+            (assoc :selected selected)
+            deck/remove-valid-set
+            deck/deselect
+            deck/ensure-set)
+        (deck/deselect db))
+       (assoc db :selected selected)))))
