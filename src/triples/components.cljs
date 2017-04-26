@@ -3,8 +3,7 @@
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [triples.deck :as deck]
             [triples.styles :as styles]
-            [goog.string :as gstring]
-            [goog.string.format]))
+            [triples.utils :as utils]))
 
 (def ReactNative (js/require "react-native"))
 (def ReactNativeSvg (js/require "react-native-svg"))
@@ -95,26 +94,17 @@
 (defn remaining-component [n]
   [text (clojure.string/join " " [n "cards remaining"])])
 
-
-(defn count-elapsed-time [timestamps]
-  (reduce + (map #(apply - (reverse %)) (partition 2 2 [(js/Date.now)]
-                                                  timestamps))))
-
 (defn timer-component []
-  (defn zpad [i] (gstring/format "%02d" i))
-  (defn minutes [milliseconds] (zpad (int (/ milliseconds 60000))))
-  (defn seconds [milliseconds] (zpad (mod (int (/ milliseconds 1000)) 60)))
   (let [this (r/current-component)
         id (js/setInterval #(r/force-update this true) 1000)
         timestamps (subscribe [:get-timestamps])]
     (r/create-class
       {:reagent-render
         (fn []
-          (let [elapsed-time (count-elapsed-time @timestamps)]
-            [scrollview {:contentContainerStyle styles/scrollview}
-              [text "Elapsed time: " (minutes elapsed-time) ":" (seconds elapsed-time)]
-              [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
-                [text {:style styles/buttontext} "Pause"]]]))
+          [scrollview {:contentContainerStyle styles/scrollview}
+            [text "Elapsed time: " (utils/elapsed-time-str @timestamps)]
+            [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
+              [text {:style styles/buttontext} "Pause"]]])
         :component-will-unmount #(js/clearInterval id)})))
 
 (defn coll-of-cards [coll]

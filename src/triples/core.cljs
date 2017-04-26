@@ -4,6 +4,7 @@
             [triples.events]
             [triples.components :as components]
             [triples.styles :as styles]
+            [triples.utils :as utils]
             [triples.subs]))
 
 (def ReactNative (js/require "react-native"))
@@ -47,11 +48,12 @@
 (defn app-root []
   (let [current-game (subscribe [:get-current-game])
         win (subscribe [:get-win])
-        paused (subscribe [:get-paused])]
+        paused (subscribe [:get-paused])
+        timestamps (subscribe [:get-timestamps])]
     (cond
       (nil? @current-game) (message-screen "No game in progress." "New Game" :start-game)
       @paused (message-screen "Game is paused." "Resume" :toggle-timer)
-      @win (message-screen "Gameover." "New Game" :start-game "test")
+      @win (message-screen "Gameover." "New Game" :start-game (str "Elapsed time: " (utils/elapsed-time-str @timestamps)))
       :else (restart-game))))
 
 (defn init []
