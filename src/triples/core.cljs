@@ -33,13 +33,13 @@
 (defn restart-game []
   (let [current-game (subscribe [:get-current-game])
         draw-pile (subscribe [:get-draw-pile])
-        start-time (subscribe [:get-start-time])
+        timestamps (subscribe [:get-timestamps])
         ]
   [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column" :marginTop 40 :align-items "center"}}
     [text {:style {:text-align "center" :font-weight "bold"}} "Current Game"]
     [triples.components/coll-of-cards @current-game]
     [triples.components/remaining-component (count @draw-pile)]
-    [triples.components/timer-component @start-time]
+    [triples.components/timer-component @timestamps]
    ]))
 
 (defn new-game []

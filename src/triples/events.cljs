@@ -39,7 +39,7 @@
  :start-game
  validate-spec
  (fn [db [_ value]]
-   (merge db (triples.deck.deal-round) {:start-time (js/Date.now)})))
+   (merge db (triples.deck.deal-round) {:timestamps [(js/Date.now)]})))
 
 (defn toggle [col val]
   (if (contains? col val)

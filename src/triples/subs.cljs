@@ -22,6 +22,6 @@
     (:selected db)))
 
 (reg-sub
-  :get-start-time
+  :get-timestamps
   (fn [db _]
-    (:start-time db)))
+    (:timestamps db)))

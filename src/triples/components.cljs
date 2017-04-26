@@ -9,8 +9,10 @@
 (def ReactNativeSvg (js/require "react-native-svg"))
 
 (def view (r/adapt-react-class (.-View ReactNative)))
+(def scrollview (r/adapt-react-class (.-ScrollView ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
 (def touchable (r/adapt-react-class (.-TouchableOpacity ReactNative)))
+(def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
 
 (def svg (r/adapt-react-class (.-Svg ReactNativeSvg)))
 (def circle (r/adapt-react-class (.-Circle ReactNativeSvg)))
@@ -90,14 +92,25 @@
   [text (clojure.string/join " " [n "cards remaining"])])
 
 
-(defn timer-component [start-time]
+(defn count-elapsed-time [timestamps]
+  (reduce + (map #(apply - (reverse %)) (partition 2 2 [(js/Date.now)]
+                                                  timestamps))))
+
+(defn timer-component [timestamps]
   (defn zpad [i] (gstring/format "%02d" i))
   (defn minutes [milliseconds] (zpad (int (/ milliseconds 60000))))
   (defn seconds [milliseconds] (zpad (mod (int (/ milliseconds 1000)) 60)))
   (let [elapsed-time (r/atom 0)]
     (fn []
-      (js/setTimeout #(reset! elapsed-time (- (js/Date.now) start-time)) 1000)
-      [text "Elapsed time: " (minutes @elapsed-time) ":" (seconds @elapsed-time)])))
+      (js/setTimeout #(reset! elapsed-time (count-elapsed-time timestamps)) 1000)
+      [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column"
+                                           :align-items "center"
+                                           :justify-content "center"}}
+        [text "Elapsed time: " (minutes @elapsed-time) ":" (seconds @elapsed-time)]
+        [touchable-highlight {:style {:background-color "#999" :padding 10
+                                      :border-radius 5} :on-press #()}
+          [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Pause"]]])))
+
 
 (defn coll-of-cards [coll]
   [view {:style
