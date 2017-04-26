@@ -75,9 +75,9 @@
       state)))
 
 (defn deal-round []
-  ;(let [deck (shuffle all-cards)]
-    ;(ensure-set {:current-game (subvec deck 0 min-deck)
-                 ;:draw-pile (subvec deck min-deck)})))
-  (let [deck all-cards]
-    (ensure-set {:current-game (subvec deck 0 6)
-                 :draw-pile (subvec deck 6 9)})))
+  (let [deck (shuffle all-cards)]
+    (ensure-set {:current-game (subvec deck 0 min-deck)
+                 :draw-pile (subvec deck min-deck)})))
+  ;(let [deck all-cards]
+  ;  (ensure-set {:current-game (subvec deck 0 6)
+  ;               :draw-pile (subvec deck 6 9)})))
