@@ -9,7 +9,12 @@
               :font-weight "bold"
               :margin-top 40})
 
-(def headertext {:font-size 30
+(def headertext {:font-size 34
+                 :font-weight "100"
+                 :margin-bottom 20
+                 :text-align "center"})
+
+(def subtext {:font-size 16
                  :font-weight "100"
                  :margin-bottom 20
                  :text-align "center"})

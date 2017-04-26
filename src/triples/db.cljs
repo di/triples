@@ -12,4 +12,5 @@
   {:greeting "Hello Clojure in iOS and Android!"
    :current-game nil
    :selected #{}
-   :win false})
+   :win false
+   :paused false})

@@ -39,7 +39,8 @@
  :start-game
  validate-spec
  (fn [db [_ value]]
-   (merge db (triples.deck.deal-round) {:timestamps [(js/Date.now)]})))
+   (merge db (triples.deck.deal-round) {:timestamps [(js/Date.now)]
+                                        :win false})))
 
 (reg-event-db
  :toggle-timer
@@ -67,6 +68,8 @@
             (assoc :selected selected)
             deck/remove-valid-set
             deck/deselect
-            deck/ensure-set)
+            deck/ensure-set
+            deck/check-win
+            )
         (deck/deselect db))
        (assoc db :selected selected)))))

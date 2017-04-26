@@ -104,16 +104,16 @@
   (defn zpad [i] (gstring/format "%02d" i))
   (defn minutes [milliseconds] (zpad (int (/ milliseconds 60000))))
   (defn seconds [milliseconds] (zpad (mod (int (/ milliseconds 1000)) 60)))
-  (let [elapsed-time (r/atom 0)
-        timestamps (subscribe [:get-timestamps])
-        paused (subscribe [:get-paused])]
+  (let [timestamps (subscribe [:get-timestamps])
+        paused (subscribe [:get-paused])
+        this (r/current-component)
+        elapsed-time (count-elapsed-time @timestamps)]
 
-    (fn []
-      (js/setTimeout #(reset! elapsed-time (count-elapsed-time @timestamps)) 1000)
-      [scrollview {:contentContainerStyle styles/scrollview}
-        [text "Elapsed time: " (minutes @elapsed-time) ":" (seconds @elapsed-time)]
-        [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
-          [text {:style styles/buttontext} (if @paused "Resume" "Pause")]]])))
+    (js/setTimeout #(r/force-update this true) 1000)
+    [scrollview {:contentContainerStyle styles/scrollview}
+      [text "Elapsed time: " (minutes elapsed-time) ":" (seconds elapsed-time)]
+      [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
+        [text {:style styles/buttontext} (if @paused "Resume" "Pause")]]]))
 
 
 (defn coll-of-cards [coll]

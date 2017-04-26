@@ -66,6 +66,14 @@
         (recur (concat current-game (take 3 draw-pile))
               (subvec draw-pile 3))))))
 
+(defn check-win [state]
+  (let [current-game (:current-game state)
+        draw-pile (:draw-pile state)]
+    (if (and (not (valid-set? current-game)) (empty? draw-pile))
+      (merge state {:win true
+                    :timestamps (conj (:timestamps state) (js/Date.now))})
+      state)))
+
 (defn deal-round []
   ;(let [deck (shuffle all-cards)]
     ;(ensure-set {:current-game (subvec deck 0 min-deck)

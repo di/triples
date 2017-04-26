@@ -27,9 +27,6 @@
 (defn alert [title]
       (.alert (.-Alert ReactNative) title))
 
-(defn start []
-  (dispatch [:start-game]))
-
 (defn restart-game []
   (let [current-game (subscribe [:get-current-game])
         draw-pile (subscribe [:get-draw-pile]) ]
@@ -39,17 +36,23 @@
     [components/remaining-component (count @draw-pile)]
     [components/timer-component]]))
 
-(defn new-game []
+(defn message-screen [message button action & [subtext]]
   [scrollview {:contentContainerStyle styles/scrollview}
-    [text {:style styles/headertext} "No game in progress."]
-    [touchable-highlight {:style styles/button :on-press #(start)}
-      [text {:style styles/buttontext} "New Game"]]])
+    [text {:style styles/headertext} message]
+    (if subtext [text {:style styles/subtext} subtext])
+    [touchable-highlight {:style styles/button
+                          :on-press #(dispatch [action])}
+      [text {:style styles/buttontext} button]]])
 
 (defn app-root []
-  (let [current-game (subscribe [:get-current-game])]
-    (if (nil? @current-game)
-      (new-game)
-      (restart-game))))
+  (let [current-game (subscribe [:get-current-game])
+        win (subscribe [:get-win])
+        paused (subscribe [:get-paused])]
+    (cond
+      (nil? @current-game) (message-screen "No game in progress." "New Game" :start-game)
+      @paused (message-screen "Game is paused." "Resume" :toggle-timer)
+      @win (message-screen "Gameover." "New Game" :start-game "test")
+      :else (restart-game))))
 
 (defn init []
   (dispatch-sync [:initialize-db])

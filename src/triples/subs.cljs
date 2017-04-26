@@ -27,6 +27,11 @@
     (:timestamps db)))
 
 (reg-sub
+  :get-win
+  (fn [db _]
+    (:win db)))
+
+(reg-sub
   :get-paused
   (fn [db _]
     (:paused db)))
