@@ -46,9 +46,9 @@
         selected (:selected state)
         cards (get-many current-game selected)
         draw-pile (:draw-pile state)
-        replace-cards (take 3 draw-pile)] ; will throw index out of bounds
+        replace-cards (take 3 draw-pile)]
 
-    (merge state (if (>= (count current-game) (+ min-deck 3))
+    (merge state (if (or (>= (count current-game) (+ min-deck 3)) (empty? draw-pile))
       {:current-game (remove (set cards) current-game)}
       {:current-game (replace (zipmap cards replace-cards)
                                             current-game)
@@ -58,7 +58,7 @@
   (let [current-game (:current-game state)
         draw-pile (:draw-pile state)]
     (loop [current-game current-game draw-pile draw-pile] ; this is ugly
-      (if (valid-set? current-game)
+      (if (or (valid-set? current-game) (empty? draw-pile))
         (merge state {:current-game current-game :draw-pile draw-pile})
         (recur (concat current-game (take 3 draw-pile))
               (subvec draw-pile 3))))))
