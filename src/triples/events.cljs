@@ -41,6 +41,14 @@
  (fn [db [_ value]]
    (merge db (triples.deck.deal-round) {:timestamps [(js/Date.now)]})))
 
+(reg-event-db
+ :toggle-timer
+  validate-spec
+ (fn [db [_ value]]
+   (let [timestamps (conj (:timestamps db) (js/Date.now))]
+   (merge db {:timestamps timestamps
+              :paused (even? (count timestamps))}))))
+
 (defn toggle [col val]
   (if (contains? col val)
     (disj col val)

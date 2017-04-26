@@ -9,5 +9,7 @@
 
 ;; initial state of app-db
 (def app-db
-  {:greeting "Hello Clojure in iOS and Android!" :current-game nil :selected #{}}
-)
+  {:greeting "Hello Clojure in iOS and Android!"
+   :current-game nil
+   :selected #{}
+   :win false})

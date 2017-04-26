@@ -56,6 +56,9 @@
 (defn select-card [index]
   (dispatch [:set-selected index]))
 
+(defn toggle-timer []
+  (dispatch [:toggle-timer]))
+
 (defn card-component [card index]
   (let [color (::deck/color card)
         hex (get color-map (::deck/color card))
@@ -96,20 +99,25 @@
   (reduce + (map #(apply - (reverse %)) (partition 2 2 [(js/Date.now)]
                                                   timestamps))))
 
-(defn timer-component [timestamps]
+(defn timer-component []
   (defn zpad [i] (gstring/format "%02d" i))
   (defn minutes [milliseconds] (zpad (int (/ milliseconds 60000))))
   (defn seconds [milliseconds] (zpad (mod (int (/ milliseconds 1000)) 60)))
-  (let [elapsed-time (r/atom 0)]
+  (let [elapsed-time (r/atom 0)
+        timestamps (subscribe [:get-timestamps])
+        paused (subscribe [:get-paused])]
+
     (fn []
-      (js/setTimeout #(reset! elapsed-time (count-elapsed-time timestamps)) 1000)
+      (js/setTimeout #(reset! elapsed-time (count-elapsed-time @timestamps)) 1000)
       [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column"
                                            :align-items "center"
                                            :justify-content "center"}}
         [text "Elapsed time: " (minutes @elapsed-time) ":" (seconds @elapsed-time)]
         [touchable-highlight {:style {:background-color "#999" :padding 10
-                                      :border-radius 5} :on-press #()}
-          [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Pause"]]])))
+                                      :border-radius 5} :on-press #(toggle-timer)}
+          [text {:style {:color "white" :text-align "center" :font-weight
+                         "bold"}}
+                (if @paused "Resume" "Pause")]]])))
 
 
 (defn coll-of-cards [coll]

@@ -25,3 +25,8 @@
   :get-timestamps
   (fn [db _]
     (:timestamps db)))
+
+(reg-sub
+  :get-paused
+  (fn [db _]
+    (:paused db)))
