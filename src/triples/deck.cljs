@@ -54,6 +54,9 @@
                                             current-game)
        :draw-pile (remove (set replace-cards) draw-pile)}))))
 
+(defn deselect [state]
+  (merge state {:selected #{}}))
+
 (defn ensure-set [state]
   (let [current-game (:current-game state)
         draw-pile (:draw-pile state)]

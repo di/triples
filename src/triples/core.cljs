@@ -28,7 +28,7 @@
       (.alert (.-Alert ReactNative) title))
 
 (defn start []
-  (dispatch [:set-game (triples.deck.deal-round)]))
+  (dispatch [:start-game]))
 
 (defn restart-game []
   (let [current-game (subscribe [:get-current-game])

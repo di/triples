@@ -36,10 +36,10 @@
    (assoc db :greeting value)))
 
 (reg-event-db
- :set-game
+ :start-game
  validate-spec
  (fn [db [_ value]]
-   (merge db value)))
+   (merge db (triples.deck.deal-round) {:start-time (js/Date.now)})))
 
 (defn toggle [col val]
   (if (contains? col val)

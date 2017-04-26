@@ -20,3 +20,8 @@
   :get-selected
   (fn [db _]
     (:selected db)))
+
+(reg-sub
+  :get-start-time
+  (fn [db _]
+    (:start-time db)))
