@@ -104,17 +104,18 @@
   (defn zpad [i] (gstring/format "%02d" i))
   (defn minutes [milliseconds] (zpad (int (/ milliseconds 60000))))
   (defn seconds [milliseconds] (zpad (mod (int (/ milliseconds 1000)) 60)))
-  (let [timestamps (subscribe [:get-timestamps])
-        paused (subscribe [:get-paused])
-        this (r/current-component)
-        elapsed-time (count-elapsed-time @timestamps)]
-
-    (js/setTimeout #(r/force-update this true) 1000)
-    [scrollview {:contentContainerStyle styles/scrollview}
-      [text "Elapsed time: " (minutes elapsed-time) ":" (seconds elapsed-time)]
-      [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
-        [text {:style styles/buttontext} (if @paused "Resume" "Pause")]]]))
-
+  (let [this (r/current-component)
+        id (js/setInterval #(r/force-update this true) 1000)
+        timestamps (subscribe [:get-timestamps])]
+    (r/create-class
+      {:reagent-render
+        (fn []
+          (let [elapsed-time (count-elapsed-time @timestamps)]
+            [scrollview {:contentContainerStyle styles/scrollview}
+              [text "Elapsed time: " (minutes elapsed-time) ":" (seconds elapsed-time)]
+              [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
+                [text {:style styles/buttontext} "Pause"]]]))
+        :component-will-unmount #(js/clearInterval id)})))
 
 (defn coll-of-cards [coll]
   [view {:style
