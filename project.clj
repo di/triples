@@ -8,7 +8,8 @@
                            [reagent "0.6.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
 [re-frame "0.8.0"]]
             :plugins [[lein-cljsbuild "1.1.4"]
-                      [lein-figwheel "0.5.8"]]
+                      [lein-figwheel "0.5.8"]
+                      [jonase/eastwood "0.2.3"]]
             :clean-targets ["target/" "index.ios.js" "index.android.js"]
             :aliases {"prod-build" ^{:doc "Recompile code with prod profile."}
                                    ["do" "clean"
