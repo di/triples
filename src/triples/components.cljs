@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [triples.deck :as deck]
+            [triples.styles :as styles]
             [goog.string :as gstring]
             [goog.string.format]))
 
@@ -109,15 +110,10 @@
 
     (fn []
       (js/setTimeout #(reset! elapsed-time (count-elapsed-time @timestamps)) 1000)
-      [scrollview {:contentContainerStyle {:flex 1 :flex-direction "column"
-                                           :align-items "center"
-                                           :justify-content "center"}}
+      [scrollview {:contentContainerStyle styles/scrollview}
         [text "Elapsed time: " (minutes @elapsed-time) ":" (seconds @elapsed-time)]
-        [touchable-highlight {:style {:background-color "#999" :padding 10
-                                      :border-radius 5} :on-press #(toggle-timer)}
-          [text {:style {:color "white" :text-align "center" :font-weight
-                         "bold"}}
-                (if @paused "Resume" "Pause")]]])))
+        [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
+          [text {:style styles/buttontext} (if @paused "Resume" "Pause")]]])))
 
 
 (defn coll-of-cards [coll]
