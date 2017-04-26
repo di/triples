@@ -48,19 +48,17 @@
         draw-pile (:draw-pile state)
         replace-cards (take 3 draw-pile)] ; will throw index out of bounds
 
-    (merge state (if (>= (count cards) (+ min-deck 3))
-      {:current-game (vec (remove (set cards) current-game))} ; some bug here TODO
+    (merge state (if (>= (count current-game) (+ min-deck 3))
+      {:current-game (remove (set cards) current-game)}
       {:current-game (replace (zipmap cards replace-cards)
                                             current-game)
        :draw-pile (remove (set replace-cards) draw-pile)}))))
 
 (defn ensure-set [state]
-  (prn "in ensureset")
   (let [current-game (:current-game state)
         draw-pile (:draw-pile state)]
     (loop [current-game current-game draw-pile draw-pile] ; this is ugly
       (if (valid-set? current-game)
-      ;(if (and (valid-set? current-game) (>= (count current) min-deck))
         (merge state {:current-game current-game :draw-pile draw-pile})
         (recur (concat current-game (take 3 draw-pile))
               (subvec draw-pile 3))))))
