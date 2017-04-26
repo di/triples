@@ -9,7 +9,6 @@
 (def ReactNativeSvg (js/require "react-native-svg"))
 
 (def view (r/adapt-react-class (.-View ReactNative)))
-(def scrollview (r/adapt-react-class (.-ScrollView ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
 (def touchable (r/adapt-react-class (.-TouchableOpacity ReactNative)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
@@ -101,7 +100,7 @@
     (r/create-class
       {:reagent-render
         (fn []
-          [scrollview {:contentContainerStyle styles/scrollview}
+          [view
             [text "Elapsed time: " (utils/elapsed-time-str @timestamps)]
             [touchable-highlight {:style styles/button :on-press #(toggle-timer)}
               [text {:style styles/buttontext} "Pause"]]])
