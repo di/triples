@@ -1,7 +1,9 @@
 (ns triples.components
   (:require [reagent.core :as r]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [triples.deck :as deck]))
+            [triples.deck :as deck]
+            [goog.string :as gstring]
+            [goog.string.format]))
 
 (def ReactNative (js/require "react-native"))
 (def ReactNativeSvg (js/require "react-native-svg"))
@@ -86,6 +88,16 @@
 
 (defn remaining-component [n]
   [text (clojure.string/join " " [n "cards remaining"])])
+
+
+(defn timer-component [start-time]
+  (defn zpad [i] (gstring/format "%02d" i))
+  (defn minutes [milliseconds] (zpad (int (/ milliseconds 60000))))
+  (defn seconds [milliseconds] (zpad (mod (int (/ milliseconds 1000)) 60)))
+  (let [elapsed-time (r/atom 0)]
+    (fn []
+      (js/setTimeout #(reset! elapsed-time (- (js/Date.now) start-time)) 1000)
+      [text "Elapsed time: " (minutes @elapsed-time) ":" (seconds @elapsed-time)])))
 
 (defn coll-of-cards [coll]
   [view {:style
