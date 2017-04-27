@@ -58,14 +58,32 @@
 (defn toggle-timer []
   (dispatch [:toggle-timer]))
 
-(defn card-component [card index]
+
+(defn stripe-components [card]
+  (let [color (::deck/color card)
+        hex (get color-map (::deck/color card))
+        shape (::deck/shape card)]
+    (map-component
+      line
+      (map #(merge % {:stroke hex :strokeWidth 2}) (get stripe-map shape)))))
+
+(defn shape-component [card]
   (let [color (::deck/color card)
         hex (get color-map (::deck/color card))
         shape (::deck/shape card)
-        number (::deck/number card)
-        shading (::deck/shading card)
-        selected (subscribe [:get-selected])
-        ]
+        shading (::deck/shading card)]
+    [svg {:height 25 :width 25}
+      [(get shape-map shape)
+       (merge
+         (get size-map shape)
+         {:fill (if (= shading :solid) hex "none")}
+         {:strokeWidth 2 :stroke hex})]
+       (if (= shading :striped)
+         (stripe-components card))]))
+
+(defn card-component [card index]
+  (let [number (::deck/number card)
+        selected (subscribe [:get-selected])]
     [touchable {:style {:flexDirection "row"
                         :justifyContent "center"
                         :borderWidth 1
@@ -74,21 +92,7 @@
                         :padding 10
                         :margin 2}
                 :on-press #(select-card index)}
-     (repeat number
-             [svg {:height 25 :width 25}
-              (cons [
-                     (get shape-map shape)
-                     (merge
-                       (get size-map shape)
-                       {:fill (if (= shading :solid) hex "none")}
-                       {:strokeWidth 2 :stroke hex}
-                       )]
-                    (if (= shading :striped)
-                      (map
-                        (fn [params] [line (merge params {:stroke hex :strokeWidth 2})])
-                        (get stripe-map shape))))])]
-      ;[text (clojure.string/join " " [color hex shape number shading])]
-))
+     (map-component shape-component (repeat number card))]))
 
 (defn remaining-component [n]
   [text (clojure.string/join " " [n "cards remaining"])])
@@ -107,6 +111,6 @@
         :component-will-unmount #(js/clearInterval id)})))
 
 (defn coll-of-cards [coll]
-  [view {:style
-         {:flexDirection "row" :flexWrap "wrap" :alignItems "flex-start"}}
+  [view {:style {:flexDirection "row" :flexWrap "wrap"
+                 :alignItems "flex-start"}}
    (map-component card-component coll)])
