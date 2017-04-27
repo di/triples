@@ -5,6 +5,10 @@
                  :align-items "center"
                  :justify-content "center"})
 
+(def view {:flex 1
+                 :flex-direction "column"
+                 :align-items "center"})
+
 (def toptext {:text-align "center"
               :font-weight "bold"
               :margin-top 40})

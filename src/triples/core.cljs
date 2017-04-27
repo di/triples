@@ -31,7 +31,7 @@
 (defn restart-game []
   (let [current-game (subscribe [:get-current-game])
         draw-pile (subscribe [:get-draw-pile]) ]
-  [scrollview {:contentContainerStyle styles/scrollview}
+  [view {:style styles/view}
     [text {:style styles/toptext} "Current Game"]
     [components/coll-of-cards @current-game]
     [components/remaining-component (count @draw-pile)]
