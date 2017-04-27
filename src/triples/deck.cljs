@@ -8,7 +8,7 @@
 (def numbers #{1 2 3})
 (def shadings #{:solid :striped :outline})
 
-(def min-deck 3)
+(def min-deck 12)
 
 (defn count-multiple-of [n]
   #(= 0 (mod (count %) n)))
