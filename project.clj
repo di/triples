@@ -8,8 +8,8 @@
                            [reagent "0.6.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
 [re-frame "0.8.0"]]
             :plugins [[lein-cljsbuild "1.1.4"]
-                      [lein-figwheel "0.5.8"]
-                      [jonase/eastwood "0.2.3"]]
+                      [lein-figwheel "0.5.8"]]
+            :hooks [leiningen.cljsbuild]
             :clean-targets ["target/" "index.ios.js" "index.android.js"]
             :aliases {"prod-build" ^{:doc "Recompile code with prod profile."}
                                    ["do" "clean"
@@ -33,6 +33,14 @@
                                                       :compiler     {:output-to     "target/android/not-used.js"
                                                                      :main          "env.android.main"
                                                                      :output-dir    "target/android"
+                                                                     :optimizations :none}}
+                                                     {:id           "test"
+                                                      :source-paths ["src" "test" "env/dev"]
+                                                      :test-commands {"unit-tests" ["node" "target/test/testable.js"]}
+                                                      :compiler     {:output-to     "target/test/testable.js"
+                                                                     :main          "triples.runner"
+                                                                     :output-dir    "target/test"
+                                                                     :target :nodejs
                                                                      :optimizations :none}}]}
                              :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
                        :prod {:cljsbuild {:builds [{:id           "ios"
